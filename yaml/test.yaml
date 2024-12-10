@@ -1,0 +1,42 @@
+nome: "Saulo"
+idade: "40"
+
+objeto:
+  versao: 2
+  arquivo: "teste"
+
+versao: 2
+versao_completa: 2.3
+
+#string
+string_sem_aspas: Digite um texto
+
+string_com_aspas: "Digite um texto"
+
+#dados nulo
+
+nulo: ~
+
+nulo_dois: null
+
+#boleans
+verdadeiro: True
+verdadeiro_dois: On
+
+falso: False
+falso_dois: Off
+#arrays
+lista: [1,2,3,4]
+
+lista_dois:
+  - "teste"
+  - 10
+  - outro teste
+
+#dicionario = objetos
+obj: {a: 1, b: 2, c: 3}
+
+objeto:
+  a: 1
+  b: 2
+  c: 3
