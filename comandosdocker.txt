@@ -1,0 +1,206 @@
+Comandos docker
+
+infoshac@gmail.com
+l4n4734m0
+
+//download baixar pacote
+docker pull whalesay
+
+-rodar o pacote:
+docker run docker/whalesay cowsay Hello_Word
+
+
+-ver container rodando
+docker ps
+docker ls
+docker container ls
+
+se adicionar -a: a gente pode ver todos os containers que foram executados
+ 
+-sair do container
+exit
+
+
+Rodar container com interação(deixar rodando) enaquanto você está trabalhando na imagem.
+Você consegue rodar comnados do node por exemplo na linha de comando até que saia do container
+-it
+
+
+Rodar da mesma forma que o it um container mas sem ocupar o terminal(background):
+-d
+docker run -d <nome_imagem>
+
+parar o container:
+docker stop <id ou nome_container>
+
+
+
+
+Expondo uma porta: colocar uma porta do container para que seja exposta para as possa acessar fora do docker.
+-p (numero do porta)
+
+docker run -d(para deixar rodando e liberar o terminal) -p 80"3000"(porta do pc):80(porta que esta expondo docker para este container) <nome da imagem>:
+docker run -d -p 80:80 ngnix
+
+
+Para dar continuidade no projeto de um container parado opte por utilizar o comando "start":
+docker start <id ou nome do container>
+docker start oiww990911
+
+Quando se inicia com o start ele salvar todos os comando que foram necessario para executar ele
+
+
+Alterando nome de um container:
+--name
+docker run -d -p 80:80 --name (nome que deseja) (imagem)
+docker run -d -p 80:80 --name nginx_app nginx
+
+
+verificar logs (erros do container)
+docker logs (container)
+
+
+Remover um container: 
+rm
+docker -rm (id ou nome_container) -f(para forçar se caso o container tiver em uso)
+docker rm node_saulo -f
+
+
+
+seuqencia basica:
+pull: baixa
+run: roda
+start: executa
+
+
+
+
+ESTRUTURA BASE PARA CRIAR UMA IMAGEM
+FROM: imagem base
+workdir: diretorio que a imagem irá trabalhar
+expose: criar um porta para o docker usar
+copy: os a serem copiados
+
+
+FROM node
+
+WORKDIR /app
+
+COPY package*.json .
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD [ "node","app.js" ]
+// o md ´similar ao run mas é para contexto interno
+
+
+apos criar o arquivo da imagem a gente dar o build da image
+docker build (nome da imagem)/ ou docker build . (dentro do dretorio que quer subir)
+
+depois a gente roda a imagem com o run
+
+Sempre que fizermos uma alteração temos que criar uma imagem nova com build novamente.
+
+
+layers são as camadas a linha que estrutura na nossa imagem ex: (from, workdir) 
+As linhas segue por caches e atualiza sempre da layers que alterou para baixo
+
+
+Download de imagem
+pull
+docker pull <nome da imagem>
+
+--help para procurar sobre um comando
+
+Para se rodar varios nodes ao mesmo tempo basta portas diferentes pra cada container
+
+Nomeando uma imagem ja criada:
+docker tag <id_imagem> <nome que deseja>: <tag>= quando vc quiser colocar uma versão
+docker tag 7621j3h2jhh: minha_imagem:2 
+
+Nomeando uma imagem ao criar a imagem:
+docker build -t (nome_image):(tag iamgem) .
+
+
+rodar imagem com -i
+docker start -i (container)
+
+removendo imagem:
+docker rmi (imagem)
+Usa -f para forçar a parada e remover
+
+romover tudo que não estivermos tulizando:
+- prune : docker system prune
+
+romvendo cntainer após utilizar
+- --rm : docker run --rm
+docker run -d -p 9090:3000 --name nomecont --rm nomeimage
+
+copia arquivo do container para a maquina e da maquina para o container:
+docker cp <nome_container>:/(diretorio)/(nome_arquivo e extensão) ./<diretorio_maquina>
+docker cp saulonode:/app/app.js ./pagina/
+
+verificar informações do container:
+top: docker top <nome do container>
+
+verificar dados de configuração do container:
+docker inspect <nome do container>
+
+Verificar processamento do container:
+docker stats
+
+
+
+
+ENVIAR IMAGEM PARA O DOCKER HUB:
+docker login
+docker logout
+1- entrar no docker hub
+2- crie um diretorio no docker hub 
+3 - crie uma imagem com o mesmo nome do diretorio acrescentando /nome da conta: ma4r1454n71nh4/<nome repositorio>
+4- push-> para subir com a imagem: docker push <nome conta>/<nome diretorio>
+ex: docker pull m4r1454n71nh4/nodeteste
+
+Fazendo atualização no docker hub
+1- altera a imagem
+2- Faz um docker build adicionando a nova tag: docker build -t m4r1454n71nh4/nodeteste:nova_versaõ .
+Apos faça o build novamente.
+3- docker pull m4r1454n71nh4/nodeteste:novaversão
+
+
+Baixando e utilizando a nossa propria imagem:
+pimeiro do um pull na minha imagem
+depois roda a imgaem para criar um container com ela
+docker run --name testandoimagem -p 1234:3000 -d <imagem baixada mais versão>
+
+
+VOLUMES
+
+TIPOS: 
+anonymous : -v (nomes aleatorios) apenas na aplicação atual
+volumes named: Volumes nomeados, pode ser utilizados em outras aplicações  
+Bind mounts: Usar o arquivo na nossa maquina sem o gerenciamneto do Docker. Uma forma de verificar oque o docker ta salvando em nosso containers
+
+Criando uma aplicação:
+Os volumes são utilizados para persistencia de dados(todos os arquivos que serão gerados dentro do containers) para que quando o container for removido a gente pode utilizar este mesmo volume em outros containers.
+1- cria imagem php(apache):
+
+php com apache
+FROM php:8-apache 
+
+//onde meus arquivos serão salvos no container
+WORDIR /var/www/html/
+
+copia tudo para esse diretorio
+COPY . .
+
+porta que ira utilizar
+
+EXPOSE 80
+
+Rodar comando que nos dar permissão no docker para salvar e utilizar o diretorio
+RUN chown -R www-data:www-data /var/www
