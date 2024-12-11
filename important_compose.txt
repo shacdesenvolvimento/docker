@@ -1,0 +1,7 @@
+  volumes:
+      - db_data:/var/lib/mysql # db_data é o nome do volume e var lib é onde será armazenado meu banco de dados no container
+
+    restart: always # este comando é para que meu container sempre se mantenha atualizado
+    
+    depends_on:    #cria uma ordem de dependencia primeiro executa oque esta aqui para depois rodar este container
+      - db
